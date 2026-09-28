@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waitstaff Portal – Order Submitted</title>
+  <style>
+    :root {
+      --bg-dark: #1B1F23;
+      --card-bg: #262B30;
+      --warm-orange: #FF7A45;
+      --warm-orange-hover: #E86835;
+      --soft-blue: #4C9AFF;
+      --success-green: #4CAF50;
+      --warning-amber: #F5A623;
+      --danger-red: #E63946;
+      --off-white: #FAFAFA;
+      --text-muted: #9CA3AF;
+      --border-dark: #2E343A;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-dark);
+      color: var(--off-white);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Subtle background pattern */
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--border-dark) 1px, transparent 1px);
+      background-size: 24px 24px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* Top left label */
+    .page-label {
+      position: absolute;
+      top: 20px;
+      left: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      z-index: 10;
+    }
+
+    .page-label svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Success Card */
+    .success-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 40px 36px 32px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      position: relative;
+      z-index: 5;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Success Icon */
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--warm-orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .success-icon svg {
+      width: 32px;
+      height: 32px;
+      color: white;
+    }
+
+    /* Title */
+    .success-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-bottom: 8px;
+    }
+
+    .success-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.4;
+    }
+
+    /* Order Details Box */
+    .order-details {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-dark);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+
+    .order-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-dark);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .meta-item svg {
+      width: 15px;
+      height: 15px;
+      color: var(--text-muted);
+    }
+
+    .order-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .order-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .item-qty {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--soft-blue);
+      min-width: 24px;
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--off-white);
+      margin-bottom: 2px;
+    }
+
+    .item-note {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Action Buttons */
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      border: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-dark);
+      color: var(--off-white);
+    }
+
+    .btn-primary {
+      background: var(--warm-orange);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--warm-orange-hover);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Sync Footer */
+    .sync-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .sync-status svg {
+      width: 14px;
+      height: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page Label -->
+  <div class="page-label">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+      <rect x="9" y="3" width="6" height="4" rx="1"/>
+    </svg>
+    Order Submitted
+  </div>
+
+  <!-- Success Card -->
+  <div class="success-card">
+    <!-- Icon -->
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
+    </div>
+
+    <!-- Title -->
+    <h1 class="success-title">Success!</h1>
+    <p class="success-subtitle">Order #2415 has been sent to the kitchen.</p>
+
+    <!-- Order Details -->
+    <div class="order-details">
+      <div class="order-meta">
+        <div class="meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          </svg>
+          Table 14
+        </div>
+        <div class="meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <path d="M14 2v6h6"/>
+          </svg>
+          3 items
+        </div>
+      </div>
+
+      <div class="order-items">
+        <div class="order-item">
+          <div class="item-qty">1x</div>
+          <div class="item-info">
+            <div class="item-name">Dry-Aged Ribeye</div>
+            <div class="item-note">Medium Rare, Peppercorn Sauce</div>
+          </div>
+        </div>
+
+        <div class="order-item">
+          <div class="item-qty">1x</div>
+          <div class="item-info">
+            <div class="item-name">Truffle Parmesan Fries</div>
+          </div>
+        </div>
+
+        <div class="order-item">
+          <div class="item-qty">1x</div>
+          <div class="item-info">
+            <div class="item-name">Old Fashioned</div>
+            <div class="item-note">Large Rock, Extra Zest</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to My Orders
+      </button>
+      <button class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        New Order
+      </button>
+    </div>
+
+    <!-- Sync Status -->
+    <div class="sync-status">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 1l4 4-4 4"/>
+        <path d="M3 11V9a4 4 0 014-4h14"/>
+        <path d="M7 23l-4-4 4-4"/>
+        <path d="M21 13v2a4 4 0 01-4 4H3"/>
+      </svg>
+      Synced with POS terminal K-12
+    </div>
+    </div>
+  </div>
+
+  <script src="/public/js/api.js"></script>
+  <script src="/public/js/nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId') || 'order-2409';
+
+      const backBtn = document.querySelector('.btn-secondary');
+      const newBtn = document.querySelector('.btn-primary');
+
+      if (backBtn) backBtn.addEventListener('click', () => window.location.href = 'orders.html');
+      if (newBtn) newBtn.addEventListener('click', () => window.location.href = 'select_table.html');
+
+      const res = await API.fetchOrderById(orderId);
+      if (res && res.success && res.order) {
+        const o = res.order;
+
+        const subtitle = document.querySelector('.success-subtitle');
+        if (subtitle) subtitle.textContent = `Order #${o.order_number || o.id} has been sent to the kitchen.`;
+
+        const metaItems = document.querySelectorAll('.meta-item');
+        if (metaItems.length >= 2) {
+          metaItems[0].innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            </svg>
+            Table ${o.table_number || 14}
+          `;
+          metaItems[1].innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+              <path d="M14 2v6h6"/>
+            </svg>
+            ${o.items.length} items
+          `;
+        }
+
+        const itemsContainer = document.querySelector('.order-items');
+        if (itemsContainer) {
+          itemsContainer.innerHTML = '';
+          o.items.forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'order-item';
+            itemDiv.innerHTML = `
+              <div class="item-qty">1x</div>
+              <div class="item-info">
+                <div class="item-name">${item.name}</div>
+                <div class="item-note">${item.note || ''}</div>
+              </div>
+            `;
+            itemsContainer.appendChild(itemDiv);
+          });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

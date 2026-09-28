@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waitstaff Portal – New Order</title>
+  <style>
+    :root {
+      --bg-dark: #1B1F23;
+      --card-bg: #262B30;
+      --warm-orange: #FF7A45;
+      --warm-orange-hover: #E86835;
+      --soft-blue: #4C9AFF;
+      --success-green: #4CAF50;
+      --warning-amber: #F5A623;
+      --danger-red: #E63946;
+      --off-white: #FAFAFA;
+      --text-muted: #9CA3AF;
+      --border-dark: #2E343A;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-dark);
+      color: var(--off-white);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      width: 220px;
+      background: #16191D;
+      border-right: 1px solid var(--border-dark);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 16px;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      margin-bottom: 28px;
+    }
+
+    .logo h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--off-white);
+      letter-spacing: -0.3px;
+    }
+
+    .logo .status {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .nav-item:hover {
+      background: var(--card-bg);
+      color: var(--off-white);
+    }
+
+    .nav-item.active {
+      background: rgba(255, 122, 69, 0.15);
+      color: var(--warm-orange);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .new-order-btn {
+      background: var(--warm-orange);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.15s ease;
+    }
+
+    .new-order-btn:hover {
+      background: var(--warm-orange-hover);
+    }
+
+    .staff-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .staff-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .staff-info {
+      line-height: 1.3;
+    }
+
+    .staff-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--off-white);
+    }
+
+    .staff-role {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ===== Main Content ===== */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Header Bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--border-dark);
+      background: var(--bg-dark);
+      flex-shrink: 0;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .page-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 8px 14px;
+      width: 280px;
+    }
+
+    .search-box svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--off-white);
+      font-size: 13px;
+      width: 100%;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--text-muted);
+    }
+
+    .kitchen-live {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--success-green);
+    }
+
+    .kitchen-live .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success-green);
+      border-radius: 50%;
+    }
+
+    .top-right svg {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .top-right svg:hover {
+      color: var(--off-white);
+    }
+
+    /* Content Layout */
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Menu Area */
+    .menu-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .menu-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .menu-title h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-bottom: 4px;
+    }
+
+    .menu-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .table-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .table-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--off-white);
+    }
+
+    .table-badge svg {
+      width: 16px;
+      height: 16px;
+      color: var(--warm-orange);
+    }
+
+    .guests {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .guests strong {
+      color: var(--off-white);
+    }
+
+    /* Category Tabs */
+    .categories {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .cat-btn {
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      background: var(--card-bg);
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+    }
+
+    .cat-btn:hover {
+      background: var(--border-dark);
+      color: var(--off-white);
+    }
+
+    .cat-btn.active {
+      background: var(--warm-orange);
+      color: white;
+    }
+
+    /* Menu Grid */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .menu-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .menu-card:hover {
+      border-color: var(--warm-orange);
+      transform: translateY(-2px);
+    }
+
+    .menu-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      background: var(--border-dark);
+      display: block;
+    }
+
+    .menu-body {
+      padding: 14px 16px 16px;
+      position: relative;
+    }
+
+    .menu-price {
+      position: absolute;
+      top: -28px;
+      right: 12px;
+      background: rgba(27, 31, 35, 0.88);
+      color: var(--off-white);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+    }
+
+    .menu-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-bottom: 4px;
+    }
+
+    .menu-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .add-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--warm-orange);
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      margin-left: auto;
+    }
+
+    .add-btn:hover {
+      background: var(--warm-orange-hover);
+    }
+
+    .add-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Order Summary Sidebar */
+    .order-summary {
+      width: 340px;
+      background: #16191D;
+      border-left: 1px solid var(--border-dark);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .summary-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border-dark);
+    }
+
+    .summary-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-bottom: 10px;
+    }
+
+    .summary-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .summary-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .table-tag {
+      background: rgba(255, 122, 69, 0.15);
+      color: var(--warm-orange);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-left: auto;
+    }
+
+    .summary-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .order-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .order-item-img {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: var(--border-dark);
+      flex-shrink: 0;
+    }
+
+    .order-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .order-item-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-bottom: 2px;
+    }
+
+    .order-item-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .order-item-price {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--off-white);
+    }
+
+    .qty-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .qty-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      color: var(--off-white);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+
+    .qty-btn:hover {
+      background: var(--border-dark);
+    }
+
+    .qty-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--off-white);
+    }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      gap: 10px;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .empty-state svg {
+      width: 32px;
+      height: 32px;
+      opacity: 0.5;
+    }
+
+    /* Summary Footer */
+    .summary-footer {
+      padding: 20px;
+      border-top: 1px solid var(--border-dark);
+    }
+
+    .totals {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .total-row.grand {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-dark);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-dark);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--card-bg);
+      color: var(--off-white);
+    }
+
+    .btn-primary {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: var(--warm-orange);
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-primary:hover {
+      background: var(--warm-orange-hover);
+    }
+
+    /* Scrollbar */
+    .menu-area::-webkit-scrollbar,
+    .summary-items::-webkit-scrollbar {
+      width: 6px;
+    }
+    .menu-area::-webkit-scrollbar-track,
+    .summary-items::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .menu-area::-webkit-scrollbar-thumb,
+    .summary-items::-webkit-scrollbar-thumb {
+      background: var(--border-dark);
+      border-radius: 3px;
+    }
+
+    @media (max-width: 1200px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>Waitstaff Portal</h1>
+      <div class="status">Shift Active</div>
+    </div>
+
+    <nav class="nav">
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/>
+          <path d="M9 12h6M9 16h6"/>
+        </svg>
+        Orders
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Tables
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        Clock
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Profile
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="new-order-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        New Order
+      </button>
+
+      <div class="staff-profile">
+        <div class="staff-avatar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div class="staff-info">
+          <div class="staff-name">Staff Profile</div>
+          <div class="staff-role">Floor Lead</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="page-label">New Order – Pan-Asian Menu</div>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" placeholder="Search Pan-Asian menu...">
+        </div>
+      </div>
+      <div class="top-right">
+        <div class="kitchen-live">
+          <span class="dot"></span>
+          KITCHEN LIVE
+        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 01-3.46 0"/>
+        </svg>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <!-- Menu Area -->
+      <div class="menu-area">
+        <div class="menu-header">
+          <div class="menu-title">
+            <h2>New Order</h2>
+            <p>Asian Fusion & Traditional Cuisine</p>
+          </div>
+          <div class="table-info">
+            <div class="table-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+              </svg>
+              Table 14
+            </div>
+            <div class="guests">Guests: <strong>4</strong></div>
+          </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="categories">
+          <button class="cat-btn active">All Items</button>
+          <button class="cat-btn">Sushi</button>
+          <button class="cat-btn">Small Plates</button>
+          <button class="cat-btn">Mains</button>
+          <button class="cat-btn">Soups</button>
+          <button class="cat-btn">Beverages</button>
+        </div>
+
+        <!-- Menu Grid -->
+        <div class="menu-grid">
+          <!-- Salmon Nigiri -->
+          <div class="menu-card">
+            <img class="menu-img" src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&h=300&fit=crop" alt="Salmon Nigiri">
+            <div class="menu-body">
+              <div class="menu-price">tk 12.00</div>
+              <div class="menu-name">Salmon Nigiri</div>
+              <div class="menu-desc">Fresh Atlantic salmon, wasabi, soy</div>
+              <button class="add-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tonkotsu Ramen -->
+          <div class="menu-card">
+            <img class="menu-img" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop" alt="Tonkotsu Ramen">
+            <div class="menu-body">
+              <div class="menu-price">tk 18.50</div>
+              <div class="menu-name">Tonkotsu Ramen</div>
+              <div class="menu-desc">Pork bone broth, chashu, soft egg</div>
+              <button class="add-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Shrimp Dim Sum -->
+          <div class="menu-card">
+            <img class="menu-img" src="https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=400&h=300&fit=crop" alt="Shrimp Dim Sum">
+            <div class="menu-body">
+              <div class="menu-price">tk 9.00</div>
+              <div class="menu-name">Shrimp Dim Sum</div>
+              <div class="menu-desc">Steamed Har Gow, chili oil</div>
+              <button class="add-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Pad Thai (FIXED IMAGE) -->
+          <div class="menu-card">
+            <img class="menu-img" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=100&h=100&fit=crop" alt="Tonkotsu Ramen" alt="Pad Thai">
+            <div class="menu-body">
+              <div class="menu-price">tk 15.00</div>
+              <div class="menu-name">Pad Thai</div>
+              <div class="menu-desc">Rice noodles, tamarind, peanuts</div>
+              <button class="add-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Miso Soup -->
+          <div class="menu-card">
+            <img class="menu-img" src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop" alt="Miso Soup">
+            <div class="menu-body">
+              <div class="menu-price">tk 5.50</div>
+              <div class="menu-name">Miso Soup</div>
+              <div class="menu-desc">Dashi, tofu, seaweed, green onion</div>
+              <button class="add-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Vegetable Tempura -->
+          <div class="menu-card">
+            <img class="menu-img" src="https://images.unsplash.com/photo-1562967914-608f82629710?w=400&h=300&fit=crop" alt="Vegetable Tempura">
+            <div class="menu-body">
+              <div class="menu-price">tk 10.00</div>
+              <div class="menu-name">Vegetable Tempura</div>
+              <div class="menu-desc">Assorted seasonal vegetables</div>
+              <button class="add-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <aside class="order-summary">
+        <div class="summary-header">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h3>Order Summary</h3>
+            <span class="table-tag">Table 14</span>
+          </div>
+          <div class="summary-meta">
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+              Wait: ~15-20 min
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              Server: Marcus J.
+            </span>
+          </div>
+        </div>
+
+        <div class="summary-items">
+          <!-- Item 1 -->
+          <div class="order-item">
+            <img class="order-item-img" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=100&h=100&fit=crop" alt="Tonkotsu Ramen">
+            <div class="order-item-info">
+              <div class="order-item-name">Tonkotsu Ramen</div>
+              <div class="order-item-note">Extra Chashu</div>
+              <div class="order-item-price">tk 18.50</div>
+            </div>
+            <div class="qty-controls">
+              <button class="qty-btn">+</button>
+              <span class="qty-value">1</span>
+              <button class="qty-btn">−</button>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="order-item">
+            <img class="order-item-img" src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=100&h=100&fit=crop" alt="Salmon Nigiri">
+            <div class="order-item-info">
+              <div class="order-item-name">Salmon Nigiri</div>
+              <div class="order-item-note">No Wasabi</div>
+              <div class="order-item-price">tk 24.00</div>
+            </div>
+            <div class="qty-controls">
+              <button class="qty-btn">+</button>
+              <span class="qty-value">2</span>
+              <button class="qty-btn">−</button>
+            </div>
+          </div>
+
+          <!-- Empty hint -->
+          <div class="empty-state" style="padding: 30px 10px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Add more items from menu
+          </div>
+        </div>
+
+        <div class="summary-footer">
+          <div class="totals">
+            <div class="total-row">
+              <span>Subtotal</span>
+              <span>tk 42.50</span>
+            </div>
+            <div class="total-row">
+              <span>Tax (8%)</span>
+              <span>tk 3.40</span>
+            </div>
+            <div class="total-row">
+              <span>Service Charge</span>
+              <span>tk 0.00</span>
+            </div>
+            <div class="total-row grand">
+              <span>Total Amount</span>
+              <span>tk 45.90</span>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn-secondary">Save Draft</button>
+            <button class="btn-primary">Submit Order</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="/public/js/api.js"></script>
+  <script src="/public/js/nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tableId = urlParams.get('tableId') || '14';
+
+      // Update Table Badge
+      const tableBadge = document.querySelector('.table-badge');
+      if (tableBadge) {
+        tableBadge.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          </svg>
+          Table ${tableId}
+        `;
+      }
+
+      // Order Cart State
+      const cart = [];
+      let activeCategory = 'All Items';
+
+      // Category tab click listeners
+      const catBtns = document.querySelectorAll('.cat-btn');
+      catBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          catBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeCategory = btn.textContent.trim();
+          loadMenu();
+        });
+      });
+
+      // Search Box listener
+      const searchInput = document.querySelector('.search-box input');
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          loadMenu();
+        });
+      }
+
+      async function loadMenu() {
+        const searchVal = searchInput ? searchInput.value.trim() : '';
+        const res = await API.fetchMenu(activeCategory, searchVal);
+        if (!res || !res.items) return;
+
+        const menuGrid = document.querySelector('.menu-grid');
+        if (!menuGrid) return;
+
+        menuGrid.innerHTML = '';
+        res.items.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'menu-card';
+          const imgUrl = item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop';
+          const priceNum = parseFloat(item.price).toFixed(2);
+
+          card.innerHTML = `
+            <img class="menu-img" src="${imgUrl}" alt="${item.name}">
+            <div class="menu-body">
+              <div class="menu-price">tk ${priceNum}</div>
+              <div class="menu-name">${item.name}</div>
+              <div class="menu-desc">${item.description || item.category}</div>
+              <button class="add-btn" title="Add to Order">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+              </button>
+            </div>
+          `;
+
+          const addBtn = card.querySelector('.add-btn');
+          addBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            addToCart(item);
+          });
+
+          card.addEventListener('click', () => {
+            addToCart(item);
+          });
+
+          menuGrid.appendChild(card);
+        });
+      }
+
+      function addToCart(item) {
+        const existing = cart.find(c => c.id === item.id || c.name === item.name);
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          cart.push({
+            id: item.id,
+            name: item.name,
+            price: parseFloat(item.price),
+            quantity: 1,
+            note: 'Standard'
+          });
+        }
+        renderCart();
+      }
+
+      function renderCart() {
+        const summaryItems = document.querySelector('.summary-items');
+        if (!summaryItems) return;
+
+        if (cart.length === 0) {
+          summaryItems.innerHTML = `
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+              </svg>
+              No items added yet. Click items on the left menu.
+            </div>
+          `;
+        } else {
+          summaryItems.innerHTML = '';
+          cart.forEach((item, index) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'order-item';
+            const totalItemPrice = (item.price * item.quantity).toFixed(2);
+
+            itemDiv.innerHTML = `
+              <div class="order-item-info">
+                <div class="order-item-name">${item.name}</div>
+                <div class="order-item-note">${item.note}</div>
+                <div class="order-item-price">tk ${totalItemPrice}</div>
+              </div>
+              <div class="qty-controls">
+                <button class="qty-btn btn-inc">+</button>
+                <div class="qty-value">${item.quantity}</div>
+                <button class="qty-btn btn-dec">-</button>
+              </div>
+            `;
+
+            const btnInc = itemDiv.querySelector('.btn-inc');
+            const btnDec = itemDiv.querySelector('.btn-dec');
+
+            btnInc.addEventListener('click', () => {
+              item.quantity += 1;
+              renderCart();
+            });
+
+            btnDec.addEventListener('click', () => {
+              item.quantity -= 1;
+              if (item.quantity <= 0) {
+                cart.splice(index, 1);
+              }
+              renderCart();
+            });
+
+            summaryItems.appendChild(itemDiv);
+          });
+        }
+
+        // Totals calculation
+        const subtotal = cart.reduce((acc, i) => acc + (i.price * i.quantity), 0);
+        const tax = subtotal * 0.10;
+        const grandTotal = subtotal + tax;
+
+        const totalRows = document.querySelectorAll('.total-row');
+        if (totalRows.length >= 3) {
+          totalRows[0].children[1].textContent = `tk ${subtotal.toFixed(2)}`;
+          totalRows[1].children[1].textContent = `tk ${tax.toFixed(2)}`;
+          totalRows[2].children[1].textContent = `tk ${grandTotal.toFixed(2)}`;
+        }
+      }
+
+      // Submit Order button click
+      const submitBtn = document.querySelector('.btn-primary');
+      if (submitBtn) {
+        submitBtn.addEventListener('click', async () => {
+          if (cart.length === 0) {
+            alert('Please add at least one item to your order before submitting.');
+            return;
+          }
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Submitting...';
+
+          try {
+            const res = await API.createOrder(tableId, cart, 'Table ' + tableId + ' order');
+            if (res && res.success && res.order) {
+              window.location.href = `order_submit.html?orderId=${res.order.id}`;
+            } else {
+              alert('Failed to submit order. Please try again.');
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Submit Order';
+            }
+          } catch (err) {
+            alert('Error submitting order: ' + err.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Order';
+          }
+        });
+      }
+
+      const saveDraftBtn = document.querySelector('.btn-secondary');
+      if (saveDraftBtn) {
+        saveDraftBtn.addEventListener('click', () => {
+          alert('Draft order saved locally!');
+        });
+      }
+
+      loadMenu();
+      renderCart();
+    });
+  </script>
+</body>
+</html>

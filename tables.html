@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waitstaff Portal – Tables</title>
+  <style>
+    :root {
+      --bg-dark: #1B1F23;
+      --card-bg: #262B30;
+      --warm-orange: #FF7A45;
+      --warm-orange-hover: #E86835;
+      --soft-blue: #4C9AFF;
+      --success-green: #4CAF50;
+      --warning-amber: #F5A623;
+      --danger-red: #E63946;
+      --off-white: #FAFAFA;
+      --text-muted: #9CA3AF;
+      --border-dark: #2E343A;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-dark);
+      color: var(--off-white);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      width: 220px;
+      background: #16191D;
+      border-right: 1px solid var(--border-dark);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 16px;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      margin-bottom: 28px;
+    }
+
+    .logo h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--off-white);
+      letter-spacing: -0.3px;
+    }
+
+    .logo .status {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .nav-item:hover {
+      background: var(--card-bg);
+      color: var(--off-white);
+    }
+
+    .nav-item.active {
+      background: rgba(255, 122, 69, 0.15);
+      color: var(--warm-orange);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .new-order-btn {
+      background: var(--warm-orange);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.15s ease;
+    }
+
+    .new-order-btn:hover {
+      background: var(--warm-orange-hover);
+    }
+
+    .staff-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .staff-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .staff-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .staff-info {
+      line-height: 1.3;
+    }
+
+    .staff-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--off-white);
+    }
+
+    .staff-role {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ===== Main Content ===== */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Header Bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--border-dark);
+      background: var(--bg-dark);
+      flex-shrink: 0;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .brand {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--warm-orange);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 8px 14px;
+      width: 240px;
+    }
+
+    .search-box svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--off-white);
+      font-size: 13px;
+      width: 100%;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--text-muted);
+    }
+
+    .top-right svg {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .top-right svg:hover {
+      color: var(--off-white);
+    }
+
+    .floor-info {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+      line-height: 1.4;
+    }
+
+    .floor-info strong {
+      color: var(--off-white);
+      font-weight: 500;
+    }
+
+    /* Scrollable Content */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Page Header */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--off-white);
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .dot.available { background: var(--success-green); }
+    .dot.occupied  { background: var(--danger-red); }
+    .dot.reserved  { background: var(--warning-amber); }
+
+    .view-toggle {
+      display: flex;
+      gap: 8px;
+    }
+
+    .toggle-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .toggle-btn:hover {
+      background: var(--border-dark);
+      color: var(--off-white);
+    }
+
+    .toggle-btn.active {
+      background: var(--warm-orange);
+      color: white;
+      border-color: var(--warm-orange);
+    }
+
+    /* Tables Grid */
+    .tables-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 14px;
+    }
+
+    .table-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 12px;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      min-height: 110px;
+    }
+
+    .table-card:hover {
+      border-color: var(--warm-orange);
+      background: #2D333A;
+    }
+
+    .table-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .table-number {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--off-white);
+      line-height: 1;
+    }
+
+    .status-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .status-available {
+      background: rgba(76, 175, 80, 0.15);
+      color: var(--success-green);
+    }
+
+    .status-occupied {
+      background: rgba(230, 57, 70, 0.15);
+      color: var(--danger-red);
+    }
+
+    .status-reserved {
+      background: rgba(245, 166, 35, 0.15);
+      color: var(--warning-amber);
+    }
+
+    .table-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: auto;
+    }
+
+    .seats {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .time-or-guests {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .time-or-guests.occupied {
+      color: var(--danger-red);
+    }
+
+    .time-or-guests.reserved {
+      color: var(--warning-amber);
+    }
+
+    .time-or-guests.available {
+      color: var(--text-muted);
+    }
+
+    /* Bottom Status Bar */
+    .bottom-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 24px;
+      margin-top: 8px;
+    }
+
+    .status-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .status-box .label {
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 2px;
+    }
+
+    .status-box .value {
+      font-weight: 600;
+      color: var(--off-white);
+    }
+
+    .status-box .value.high {
+      color: var(--danger-red);
+    }
+
+    .refresh-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+    }
+
+    .refresh-btn:hover {
+      color: var(--off-white);
+    }
+
+    /* Scrollbar */
+    .content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .content::-webkit-scrollbar-thumb {
+      background: var(--border-dark);
+      border-radius: 3px;
+    }
+
+    /* Responsive adjustment for smaller screens */
+    @media (max-width: 1400px) {
+      .tables-grid {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+    @media (max-width: 1100px) {
+      .tables-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>Waitstaff Portal</h1>
+      <div class="status">Shift Active</div>
+    </div>
+
+    <nav class="nav">
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/>
+          <path d="M9 12h6M9 16h6"/>
+        </svg>
+        Orders
+      </a>
+      <a href="#" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Tables
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        Clock
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Profile
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="new-order-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        New Order
+      </button>
+
+      <div class="staff-profile">
+        <div class="staff-avatar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div class="staff-info">
+          <div class="staff-name">Alex Rivera</div>
+          <div class="staff-role">Server #42</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="brand">Restaurant OS</div>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" placeholder="Search tables...">
+        </div>
+      </div>
+      <div class="top-right">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 01-3.46 0"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        <div class="floor-info">
+          Floor 1: Main Dining<br>
+          <strong>ACTIVE STATION</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div style="display: flex; align-items: center; gap: 24px;">
+          <h2 class="page-title">Table Overview</h2>
+          <div class="legend">
+            <div class="legend-item">
+              <span class="dot available"></span>
+              Available (14)
+            </div>
+            <div class="legend-item">
+              <span class="dot occupied"></span>
+              Occupied (8)
+            </div>
+            <div class="legend-item">
+              <span class="dot reserved"></span>
+              Reserved (3)
+            </div>
+          </div>
+        </div>
+
+        <div class="view-toggle">
+          <button class="toggle-btn">Floor Map</button>
+          <button class="toggle-btn active">Grid View</button>
+        </div>
+      </div>
+
+      <!-- Tables Grid -->
+      <div class="tables-grid">
+
+        <!-- Row 1 -->
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">01</div>
+            <span class="status-badge status-occupied">OCCUPIED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 4</div>
+            <div class="time-or-guests occupied">4/4</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">02</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 2</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">03</div>
+            <span class="status-badge status-reserved">RESERVED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 6</div>
+            <div class="time-or-guests reserved">19:30</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">04</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 2</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">05</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 7</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">06</div>
+            <span class="status-badge status-occupied">OCCUPIED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 5</div>
+            <div class="time-or-guests occupied">4/5</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">07</div>
+            <span class="status-badge status-reserved">RESERVED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 3</div>
+            <div class="time-or-guests reserved">20:30</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">08</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 5</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">09</div>
+            <span class="status-badge status-reserved">RESERVED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 6</div>
+            <div class="time-or-guests reserved">19:00</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">10</div>
+            <span class="status-badge status-reserved">RESERVED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 6</div>
+            <div class="time-or-guests reserved">18:00</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">11</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 4</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">12</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 3</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">13</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 2</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">14</div>
+            <span class="status-badge status-reserved">RESERVED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 2</div>
+            <div class="time-or-guests reserved">18:30</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">15</div>
+            <span class="status-badge status-reserved">RESERVED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 2</div>
+            <div class="time-or-guests reserved">20:30</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">16</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 5</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">17</div>
+            <span class="status-badge status-occupied">OCCUPIED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 5</div>
+            <div class="time-or-guests occupied">5/5</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">18</div>
+            <span class="status-badge status-reserved">RESERVED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 4</div>
+            <div class="time-or-guests reserved">18:30</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">19</div>
+            <span class="status-badge status-reserved">RESERVED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 5</div>
+            <div class="time-or-guests reserved">19:30</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">20</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 3</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">21</div>
+            <span class="status-badge status-occupied">OCCUPIED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 4</div>
+            <div class="time-or-guests occupied">4/4</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">22</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 6</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">23</div>
+            <span class="status-badge status-occupied">OCCUPIED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 4</div>
+            <div class="time-or-guests occupied">3/4</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">24</div>
+            <span class="status-badge status-reserved">RESERVED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 6</div>
+            <div class="time-or-guests reserved">19:00</div>
+          </div>
+        </div>
+
+        <!-- Row 4 -->
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">25</div>
+            <span class="status-badge status-occupied">OCCUPIED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 4</div>
+            <div class="time-or-guests occupied">3/4</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">26</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 2</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">27</div>
+            <span class="status-badge status-occupied">OCCUPIED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 4</div>
+            <div class="time-or-guests occupied">4/4</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">28</div>
+            <span class="status-badge status-reserved">RESERVED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 4</div>
+            <div class="time-or-guests reserved">18:30</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">29</div>
+            <span class="status-badge status-reserved">RESERVED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 6</div>
+            <div class="time-or-guests reserved">19:30</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">30</div>
+            <span class="status-badge status-occupied">OCCUPIED</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 5</div>
+            <div class="time-or-guests occupied">4/5</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">31</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 5</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-number">32</div>
+            <span class="status-badge status-available">AVAILABLE</span>
+          </div>
+          <div class="table-meta">
+            <div class="seats">Seats: 6</div>
+            <div class="time-or-guests available"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Status -->
+      <div class="bottom-bar">
+        <div class="status-box">
+          <div>
+            <div class="label">Kitchen Load</div>
+            <div class="value high">High</div>
+          </div>
+          <div>
+            <div class="label">Est. Wait</div>
+            <div class="value">15–20m</div>
+          </div>
+          <button class="refresh-btn" title="Refresh">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6"/>
+              <path d="M1 20v-6h6"/>
+              <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/public/js/api.js"></script>
+  <script src="/public/js/nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Toggle view handlers
+      const toggleBtns = document.querySelectorAll('.view-toggle .toggle-btn');
+      toggleBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          if (btn.textContent.trim().toLowerCase().includes('grid')) {
+            window.location.href = 'table_grid.html';
+          } else {
+            window.location.href = 'tables.html';
+          }
+        });
+      });
+
+      // Load tables dynamically
+      async function renderTables() {
+        const data = await API.fetchTables();
+        if (!data || !data.tables) return;
+
+        const grid = document.querySelector('.tables-grid');
+        if (!grid) return;
+
+        // Update Legend Counts
+        const legendItems = document.querySelectorAll('.legend-item');
+        if (legendItems.length >= 3) {
+          legendItems[0].innerHTML = `<span class="dot available"></span> Available (${data.counts.available})`;
+          legendItems[1].innerHTML = `<span class="dot occupied"></span> Occupied (${data.counts.occupied})`;
+          legendItems[2].innerHTML = `<span class="dot reserved"></span> Reserved (${data.counts.reserved})`;
+        }
+
+        grid.innerHTML = '';
+        data.tables.forEach(t => {
+          const card = document.createElement('div');
+          card.className = 'table-card';
+
+          const statusClass = t.status === 'free' || t.status === 'available' ? 'status-available' : (t.status === 'occupied' ? 'status-occupied' : 'status-reserved');
+          const statusText = t.status === 'free' ? 'AVAILABLE' : t.status.toUpperCase();
+          const numFormatted = String(t.table_number).padStart(2, '0');
+
+          card.innerHTML = `
+            <div class="table-top">
+              <div class="table-number">${numFormatted}</div>
+              <span class="status-badge ${statusClass}">${statusText}</span>
+            </div>
+            <div class="table-meta">
+              <div class="seats">Seats: ${t.capacity}</div>
+              <div class="time-or-guests ${t.status}">${t.status === 'occupied' ? t.capacity + '/' + t.capacity : (t.status === 'reserved' ? '19:30' : '')}</div>
+            </div>
+          `;
+
+          // Click table to switch status or start order
+          card.addEventListener('click', async () => {
+            if (t.status === 'free' || t.status === 'available') {
+              window.location.href = `select_table.html?tableId=${t.table_number}`;
+            } else if (t.status === 'occupied') {
+              if (confirm(`Table ${t.table_number} is occupied. Mark as Free/Available?`)) {
+                await API.updateTableStatus(t.id || t.table_number, 'free');
+                renderTables();
+              }
+            } else {
+              if (confirm(`Table ${t.table_number} is reserved. Mark as Occupied?`)) {
+                await API.updateTableStatus(t.id || t.table_number, 'occupied');
+                renderTables();
+              }
+            }
+          });
+
+          grid.appendChild(card);
+        });
+      }
+
+      const searchInput = document.querySelector('.search-box input');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase().trim();
+          const cards = document.querySelectorAll('.table-card');
+          cards.forEach(card => {
+            const num = card.querySelector('.table-number')?.textContent || '';
+            if (num.includes(query) || !query) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      }
+
+      const refreshBtn = document.querySelector('.refresh-btn');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', renderTables);
+      }
+
+      renderTables();
+    });
+  </script>
+</body>
+</html>

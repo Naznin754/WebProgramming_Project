@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Environment variables (may contain secrets)
+.env
+
+# Local SQLite database (recreated and seeded automatically on first run)
+restaurant.db
+restaurant.db-wal
+restaurant.db-shm
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

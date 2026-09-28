@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waitstaff Portal – Table Grid View</title>
+  <style>
+    :root {
+      --bg-dark: #1B1F23;
+      --card-bg: #262B30;
+      --warm-orange: #FF7A45;
+      --warm-orange-hover: #E86835;
+      --soft-blue: #4C9AFF;
+      --success-green: #4CAF50;
+      --warning-amber: #F5A623;
+      --danger-red: #E63946;
+      --off-white: #FAFAFA;
+      --text-muted: #9CA3AF;
+      --border-dark: #2E343A;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-dark);
+      color: var(--off-white);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      width: 220px;
+      background: #16191D;
+      border-right: 1px solid var(--border-dark);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 16px;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      margin-bottom: 28px;
+    }
+
+    .logo h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--off-white);
+      letter-spacing: -0.3px;
+    }
+
+    .logo .status {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .nav-item:hover {
+      background: var(--card-bg);
+      color: var(--off-white);
+    }
+
+    .nav-item.active {
+      background: rgba(255, 122, 69, 0.15);
+      color: var(--warm-orange);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .new-order-btn {
+      background: var(--warm-orange);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.15s ease;
+    }
+
+    .new-order-btn:hover {
+      background: var(--warm-orange-hover);
+    }
+
+    .staff-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .staff-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .staff-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .staff-info {
+      line-height: 1.3;
+    }
+
+    .staff-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--off-white);
+    }
+
+    .staff-role {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ===== Main Content ===== */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Header Bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--border-dark);
+      background: var(--bg-dark);
+      flex-shrink: 0;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 8px 14px;
+      width: 260px;
+    }
+
+    .search-box svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--off-white);
+      font-size: 13px;
+      width: 100%;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .view-toggle {
+      display: flex;
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 3px;
+      border: 1px solid var(--border-dark);
+    }
+
+    .toggle-btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+    }
+
+    .toggle-btn.active {
+      background: var(--warm-orange);
+      color: white;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--text-muted);
+    }
+
+    .top-right svg {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .top-right svg:hover {
+      color: var(--off-white);
+    }
+
+    /* Scrollable Content */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--off-white);
+    }
+
+    .stat-value.occupied {
+      color: var(--danger-red);
+    }
+
+    .stat-value.reserved {
+      color: var(--soft-blue);
+    }
+
+    /* Table */
+    .table-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-dark);
+      background: #16191D;
+    }
+
+    .data-table th .sort {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .data-table td {
+      padding: 16px 18px;
+      font-size: 14px;
+      color: var(--off-white);
+      border-bottom: 1px solid var(--border-dark);
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .table-id {
+      font-weight: 600;
+      color: var(--off-white);
+    }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .status-occupied {
+      background: rgba(230, 57, 70, 0.15);
+      color: var(--danger-red);
+    }
+
+    .status-available {
+      background: rgba(76, 175, 80, 0.15);
+      color: var(--success-green);
+    }
+
+    .status-reserved {
+      background: rgba(76, 154, 255, 0.15);
+      color: var(--soft-blue);
+    }
+
+    .server {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .server-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--border-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--off-white);
+    }
+
+    .unassigned {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .time-active {
+      font-variant-numeric: tabular-nums;
+      color: var(--text-muted);
+    }
+
+    .actions-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    .actions-btn:hover {
+      color: var(--off-white);
+      background: var(--border-dark);
+    }
+
+    /* Pagination */
+    .table-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-top: 1px solid var(--border-dark);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border-dark);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-btn.active {
+      background: var(--warm-orange);
+      border-color: var(--warm-orange);
+      color: white;
+    }
+
+    .page-btn:hover:not(.active) {
+      background: var(--card-bg);
+      color: var(--off-white);
+    }
+
+    /* Bottom Section */
+    .bottom-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--off-white);
+    }
+
+    .overdue-badge {
+      background: rgba(230, 57, 70, 0.15);
+      color: var(--danger-red);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .priority-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-dark);
+    }
+
+    .priority-item:last-child {
+      border-bottom: none;
+    }
+
+    .priority-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .priority-table {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--off-white);
+    }
+
+    .priority-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .priority-time {
+      font-size: 12px;
+      color: var(--danger-red);
+      font-weight: 500;
+    }
+
+    .check-btn {
+      background: transparent;
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      font-size: 12px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .check-btn:hover {
+      background: var(--bg-dark);
+      color: var(--off-white);
+    }
+
+    /* Staff Briefing */
+    .briefing-card {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .briefing-img {
+      width: 80px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: var(--border-dark);
+      flex-shrink: 0;
+    }
+
+    .briefing-content h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--off-white);
+      margin-bottom: 4px;
+    }
+
+    .briefing-content p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Scrollbar */
+    .content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .content::-webkit-scrollbar-thumb {
+      background: var(--border-dark);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>Waitstaff Portal</h1>
+      <div class="status">Shift Active</div>
+    </div>
+
+    <nav class="nav">
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/>
+          <path d="M9 12h6M9 16h6"/>
+        </svg>
+        Orders
+      </a>
+      <a href="#" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Tables
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        Clock
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Profile
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="new-order-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        New Order
+      </button>
+
+      <div class="staff-profile">
+        <div class="staff-avatar">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" alt="Alex Chen">
+        </div>
+        <div class="staff-info">
+          <div class="staff-name">Alex Chen</div>
+          <div class="staff-role">Floor Lead</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" placeholder="Search tables or servers...">
+        </div>
+
+        <div class="view-toggle">
+          <button class="toggle-btn">Floor Map</button>
+          <button class="toggle-btn active">Grid View</button>
+        </div>
+      </div>
+
+      <div class="top-right">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 01-3.46 0"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+    </header>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total Tables</div>
+          <div class="stat-value">24</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Occupied</div>
+          <div class="stat-value occupied">14</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Reserved</div>
+          <div class="stat-value reserved">4</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Turnover Rate</div>
+          <div class="stat-value">1.2h</div>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>
+                <span class="sort">
+                  Table #
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 15l5 5 5-5M7 9l5-5 5 5"/>
+                  </svg>
+                </span>
+              </th>
+              <th>Status</th>
+              <th>Seats</th>
+              <th>Assigned Server</th>
+              <th>Time Active</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="table-id">T-101</td>
+              <td><span class="status-badge status-occupied">Occupied</span></td>
+              <td>4 People</td>
+              <td>
+                <div class="server">
+                  <div class="server-avatar">JS</div>
+                  Jordan Smith
+                </div>
+              </td>
+              <td class="time-active">00:42:15</td>
+              <td>
+                <button class="actions-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td class="table-id">T-102</td>
+              <td><span class="status-badge status-available">Available</span></td>
+              <td>2 People</td>
+              <td><span class="unassigned">Unassigned</span></td>
+              <td class="time-active">--:--</td>
+              <td>
+                <button class="actions-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td class="table-id">T-103</td>
+              <td><span class="status-badge status-reserved">Reserved</span></td>
+              <td>8 People</td>
+              <td>
+                <div class="server">
+                  <div class="server-avatar">AC</div>
+                  Alex Chen
+                </div>
+              </td>
+              <td class="time-active">Starts 19:00</td>
+              <td>
+                <button class="actions-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td class="table-id">T-201</td>
+              <td><span class="status-badge status-occupied">Occupied</span></td>
+              <td>6 People</td>
+              <td>
+                <div class="server">
+                  <div class="server-avatar">MT</div>
+                  Maria Torres
+                </div>
+              </td>
+              <td class="time-active">01:15:30</td>
+              <td>
+                <button class="actions-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td class="table-id">T-202</td>
+              <td><span class="status-badge status-available">Available</span></td>
+              <td>4 People</td>
+              <td><span class="unassigned">Unassigned</span></td>
+              <td class="time-active">--:--</td>
+              <td>
+                <button class="actions-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td class="table-id">B-01</td>
+              <td><span class="status-badge status-occupied">Occupied</span></td>
+              <td>1 Person</td>
+              <td>
+                <div class="server">
+                  <div class="server-avatar">JS</div>
+                  Jordan Smith
+                </div>
+              </td>
+              <td class="time-active">00:15:30</td>
+              <td>
+                <button class="actions-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="table-footer">
+          <div>Showing 6 of 24 tables</div>
+          <div class="pagination">
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Section -->
+      <div class="bottom-section">
+        <!-- Priority Orders -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Priority Orders</div>
+            <span class="overdue-badge">4 Overdue</span>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-info">
+              <div class="priority-table">T-101 (Mains Pending)</div>
+              <div class="priority-desc">Porterhouse, Sea Bass, Mushroom Risotto</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="priority-time">21m</span>
+              <button class="check-btn">Check Kitchen</button>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-info">
+              <div class="priority-table">T-201 (Desserts Ready)</div>
+              <div class="priority-desc"></div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="priority-time">5m</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Staff Briefing -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Staff Briefing</div>
+          </div>
+          <div class="briefing-card">
+            <img class="briefing-img" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=160&h=120&fit=crop" alt="Special">
+            <div class="briefing-content">
+              <h4>Tonight’s Specials:</h4>
+              <p>Pan-seared Scallops with Saffron Cream</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/public/js/api.js"></script>
+  <script src="/public/js/nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Toggle view buttons
+      const toggleBtns = document.querySelectorAll('.view-toggle .toggle-btn');
+      toggleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (btn.textContent.trim().toLowerCase().includes('map')) {
+            window.location.href = 'tables.html';
+          } else {
+            window.location.href = 'table_grid.html';
+          }
+        });
+      });
+
+      async function loadGridData() {
+        const data = await API.fetchTables();
+        if (!data || !data.tables) return;
+
+        // Update Stat Cards
+        const statValues = document.querySelectorAll('.stats-row .stat-value');
+        if (statValues.length >= 4) {
+          statValues[0].textContent = data.counts.total;
+          statValues[1].textContent = data.counts.occupied;
+          statValues[2].textContent = data.counts.reserved;
+          statValues[3].textContent = '1.2h';
+        }
+
+        const tbody = document.querySelector('.data-table tbody');
+        if (!tbody) return;
+
+        tbody.innerHTML = '';
+        data.tables.forEach(t => {
+          const tr = document.createElement('tr');
+          const statusBadgeClass = t.status === 'free' || t.status === 'available' ? 'status-available' : (t.status === 'occupied' ? 'status-occupied' : 'status-reserved');
+          const statusText = t.status === 'free' ? 'Available' : (t.status === 'occupied' ? 'Occupied' : 'Reserved');
+          const serverName = t.status === 'occupied' ? 'Jordan Smith' : (t.status === 'reserved' ? 'Alex Chen' : '<span class="unassigned">Unassigned</span>');
+          const activeTime = t.status === 'occupied' ? '00:42:15' : (t.status === 'reserved' ? 'Starts 19:00' : '--:--');
+
+          tr.innerHTML = `
+            <td class="table-id">T-${String(t.table_number).padStart(3, '0')}</td>
+            <td><span class="status-badge ${statusBadgeClass}">${statusText}</span></td>
+            <td>${t.capacity} People</td>
+            <td>
+              <div class="server">
+                <div class="server-avatar">${t.status === 'free' ? '--' : 'JS'}</div>
+                ${serverName}
+              </div>
+            </td>
+            <td class="time-active">${activeTime}</td>
+            <td>
+              <button class="actions-btn" title="Toggle Status">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                </svg>
+              </button>
+            </td>
+          `;
+
+          const actionBtn = tr.querySelector('.actions-btn');
+          if (actionBtn) {
+            actionBtn.addEventListener('click', async () => {
+              const newStatus = t.status === 'occupied' ? 'free' : (t.status === 'free' ? 'reserved' : 'occupied');
+              await API.updateTableStatus(t.id || t.table_number, newStatus);
+              loadGridData();
+            });
+          }
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      const searchInput = document.querySelector('.search-box input');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const val = e.target.value.toLowerCase().trim();
+          const rows = document.querySelectorAll('.data-table tbody tr');
+          rows.forEach(r => {
+            const text = r.textContent.toLowerCase();
+            r.style.display = text.includes(val) ? '' : 'none';
+          });
+        });
+      }
+
+      loadGridData();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waitstaff Portal – Clock / Attendance</title>
+  <style>
+    :root {
+      --bg-dark: #1B1F23;
+      --card-bg: #262B30;
+      --warm-orange: #FF7A45;
+      --warm-orange-hover: #E86835;
+      --soft-blue: #4C9AFF;
+      --success-green: #4CAF50;
+      --warning-amber: #F5A623;
+      --danger-red: #E63946;
+      --off-white: #FAFAFA;
+      --text-muted: #9CA3AF;
+      --border-dark: #2E343A;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-dark);
+      color: var(--off-white);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      width: 220px;
+      background: #16191D;
+      border-right: 1px solid var(--border-dark);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 16px;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      margin-bottom: 28px;
+    }
+
+    .logo h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--off-white);
+      letter-spacing: -0.3px;
+    }
+
+    .logo .status {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .nav-item:hover {
+      background: var(--card-bg);
+      color: var(--off-white);
+    }
+
+    .nav-item.active {
+      background: rgba(255, 122, 69, 0.15);
+      color: var(--warm-orange);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .new-order-btn {
+      background: var(--warm-orange);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.15s ease;
+    }
+
+    .new-order-btn:hover {
+      background: var(--warm-orange-hover);
+    }
+
+    .staff-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .staff-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      overflow: hidden;
+    }
+
+    .staff-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .staff-info {
+      line-height: 1.3;
+    }
+
+    .staff-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--off-white);
+    }
+
+    .staff-id {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ===== Main Content ===== */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Header Bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--border-dark);
+      background: var(--bg-dark);
+      flex-shrink: 0;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .brand {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--warm-orange);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 8px 14px;
+      width: 260px;
+    }
+
+    .search-box svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--off-white);
+      font-size: 13px;
+      width: 100%;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--text-muted);
+    }
+
+    .top-right svg {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .top-right svg:hover {
+      color: var(--off-white);
+    }
+
+    /* Scrollable Content */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Clock Card */
+    .clock-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 48px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .clock-date {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .clock-time {
+      font-size: 64px;
+      font-weight: 600;
+      color: var(--off-white);
+      letter-spacing: -1px;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 40px;
+    }
+
+    .status-pill .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--soft-blue);
+      border-radius: 50%;
+    }
+
+    /* Clock In Button */
+    .clock-btn {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      border: 3px solid var(--success-green);
+      background: transparent;
+      color: var(--success-green);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+
+    .clock-btn:hover {
+      background: rgba(76, 175, 80, 0.12);
+      transform: scale(1.03);
+    }
+
+    .clock-btn svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    /* Attendance History */
+    .history-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .history-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--off-white);
+    }
+
+    .history-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .filter-btn {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn:hover {
+      background: var(--card-bg);
+      color: var(--off-white);
+    }
+
+    /* Table */
+    .attendance-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .attendance-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-dark);
+    }
+
+    .attendance-table td {
+      padding: 16px;
+      font-size: 14px;
+      color: var(--off-white);
+      border-bottom: 1px solid var(--border-dark);
+    }
+
+    .attendance-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .attendance-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .hours-badge {
+      display: inline-block;
+      background: rgba(76, 154, 255, 0.15);
+      color: var(--soft-blue);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .hours-badge.half {
+      background: rgba(245, 166, 35, 0.15);
+      color: var(--warning-amber);
+    }
+
+    .action-icon {
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .action-icon:hover {
+      color: var(--off-white);
+    }
+
+    .view-full {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-dark);
+    }
+
+    .view-full a {
+      color: var(--warm-orange);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .view-full a:hover {
+      text-decoration: underline;
+    }
+
+    /* Scrollbar */
+    .content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .content::-webkit-scrollbar-thumb {
+      background: var(--border-dark);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>Waitstaff Portal</h1>
+      <div class="status">Shift Active</div>
+    </div>
+
+    <nav class="nav">
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/>
+          <path d="M9 12h6M9 16h6"/>
+        </svg>
+        Orders
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Tables
+      </a>
+      <a href="#" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        Clock
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Profile
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="new-order-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        New Order
+      </button>
+
+      <div class="staff-profile">
+        <div class="staff-avatar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div class="staff-info">
+          <div class="staff-name">Staff Profile</div>
+          <div class="staff-id">ID: #4402</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="brand">Restaurant OS</div>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" id="attendance-search-input" placeholder="Search date, hours, status...">
+        </div>
+      </div>
+      <div class="top-right">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 01-3.46 0"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+    </header>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+
+      <!-- Clock Card -->
+      <div class="clock-card">
+        <div class="clock-date">SATURDAY, SEPTEMBER 5, 2026</div>
+        <div class="clock-time">09:00:57</div>
+        <div class="status-pill">
+          <span class="dot"></span>
+          Currently: Clocked Out
+        </div>
+
+        <button class="clock-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          CLOCK IN
+        </button>
+      </div>
+
+      <!-- Attendance History -->
+      <div class="history-section">
+        <div class="history-header">
+          <h3 class="history-title">Attendance History</h3>
+          <div class="history-actions">
+            <button type="button" class="filter-btn" id="range-filter-btn">Last 7 Days</button>
+            <button type="button" class="filter-btn" id="status-filter-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+              </svg>
+              Filter: All
+            </button>
+          </div>
+        </div>
+
+        <table class="attendance-table">
+          <thead>
+            <tr>
+              <th>DATE</th>
+              <th>CLOCK IN</th>
+              <th>CLOCK OUT</th>
+              <th>TOTAL HOURS</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+
+        <div class="view-full">
+          <a href="#" id="view-full-attendance-link">View Full Attendance Record</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Full Attendance Modal -->
+  <div id="full-attendance-backdrop" style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); z-index: 20000; opacity: 0; pointer-events: none; transition: all 0.25s ease; display: flex; align-items: center; justify-content: center;">
+    <div id="full-attendance-modal" style="width: 90%; max-width: 680px; background: #262B30; border: 1px solid #2E343A; border-radius: 16px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.7); max-height: 85vh; display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; border-bottom: 1px solid #2E343A; padding-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(76, 154, 255, 0.15); color: #4C9AFF; display: flex; align-items: center; justify-content: center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div>
+            <h3 style="font-size: 17px; font-weight: 600; color: #FAFAFA;">Full Staff Attendance Record</h3>
+            <div style="font-size: 12px; color: #9CA3AF;">Complete shift history, logged hours, and clock-in metrics</div>
+          </div>
+        </div>
+        <button id="close-attendance-modal-btn" style="background: transparent; border: none; color: #9CA3AF; cursor: pointer; font-size: 20px; padding: 4px;">✕</button>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; flex-wrap: wrap;">
+        <input type="text" id="modal-search-input" placeholder="Filter modal logs..." style="background: #1B1F23; border: 1px solid #2E343A; border-radius: 8px; padding: 8px 14px; font-size: 13px; color: #FAFAFA; outline: none; flex: 1; min-width: 200px;">
+        <button id="export-csv-btn" style="background: #4C9AFF; color: white; border: none; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export CSV
+        </button>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto; border: 1px solid #2E343A; border-radius: 10px; background: #1B1F23; margin-bottom: 18px;">
+        <table class="attendance-table" style="width: 100%;">
+          <thead>
+            <tr>
+              <th>DATE</th>
+              <th>CLOCK IN</th>
+              <th>CLOCK OUT</th>
+              <th>TOTAL HOURS</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+          <tbody id="modal-attendance-tbody">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; pt-3; border-top: 1px solid #2E343A; padding-top: 14px;">
+        <div style="font-size: 12px; color: #9CA3AF;" id="total-logs-count">Total 4 records logged</div>
+        <button id="close-modal-footer-btn" style="background: var(--warm-orange); color: white; border: none; border-radius: 8px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/public/js/api.js"></script>
+  <script src="/public/js/nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      let fullAttendanceData = [];
+      let currentFilterStatus = 'all'; // 'all', 'full', 'half'
+      let currentRangeFilter = '7days'; // '7days', '30days', 'all'
+      let searchQuery = '';
+
+      // Live clock display
+      const timeDiv = document.querySelector('.clock-time');
+      const dateDiv = document.querySelector('.clock-date');
+
+      function updateClock() {
+        const now = new Date();
+        if (timeDiv) {
+          timeDiv.textContent = now.toLocaleTimeString('en-US', { hour12: false });
+        }
+        if (dateDiv) {
+          dateDiv.textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+        }
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      // Attendance state management
+      const clockBtn = document.querySelector('.clock-btn');
+      const statusPill = document.querySelector('.status-pill');
+
+      async function refreshAttendance() {
+        const data = await API.fetchAttendanceCurrent();
+        if (!data) return;
+
+        const { shift, history } = data;
+        fullAttendanceData = history || [];
+        const isClocked = shift && shift.clockedIn;
+
+        if (statusPill) {
+          statusPill.innerHTML = `
+            <span class="dot" style="background: ${isClocked ? '#4CAF50' : '#4C9AFF'};"></span>
+            Currently: ${isClocked ? 'Clocked In (' + shift.clockInTime + ')' : 'Clocked Out'}
+          `;
+        }
+
+        if (clockBtn) {
+          if (isClocked) {
+            clockBtn.style.borderColor = '#E63946';
+            clockBtn.style.color = '#E63946';
+            clockBtn.innerHTML = `
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              CLOCK OUT
+            `;
+          } else {
+            clockBtn.style.borderColor = '#4CAF50';
+            clockBtn.style.color = '#4CAF50';
+            clockBtn.innerHTML = `
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/>
+                <polyline points="10 17 15 12 10 7"/>
+                <line x1="15" y1="12" x2="3" y2="12"/>
+              </svg>
+              CLOCK IN
+            `;
+          }
+        }
+
+        renderFilteredTable();
+      }
+
+      function renderFilteredTable() {
+        const tbody = document.querySelector('.attendance-table tbody');
+        if (!tbody) return;
+
+        let filtered = [...fullAttendanceData];
+
+        // Status Filter
+        if (currentFilterStatus === 'full') {
+          filtered = filtered.filter(r => (r.status || '').toLowerCase().includes('full'));
+        } else if (currentFilterStatus === 'half') {
+          filtered = filtered.filter(r => (r.status || '').toLowerCase().includes('half'));
+        }
+
+        // Search Query Filter
+        if (searchQuery) {
+          filtered = filtered.filter(r =>
+            (r.date || '').toLowerCase().includes(searchQuery) ||
+            (r.hours || '').toLowerCase().includes(searchQuery) ||
+            (r.clock_in || '').toLowerCase().includes(searchQuery) ||
+            (r.status || '').toLowerCase().includes(searchQuery)
+          );
+        }
+
+        tbody.innerHTML = '';
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9CA3AF; padding: 20px;">No matching attendance records found.</td></tr>`;
+          return;
+        }
+
+        filtered.forEach(row => {
+          const tr = document.createElement('tr');
+          const isHalf = (row.status || '').toLowerCase().includes('half');
+
+          tr.innerHTML = `
+            <td>${row.date}</td>
+            <td>${row.clock_in || '--'}</td>
+            <td>${row.clock_out || '--'}</td>
+            <td><span class="hours-badge ${isHalf ? 'half' : ''}">${row.hours} ${isHalf ? '(Half Day)' : ''}</span></td>
+            <td>
+              <svg class="action-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;" title="View Details">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </td>
+          `;
+
+          const actionIcon = tr.querySelector('.action-icon');
+          if (actionIcon) {
+            actionIcon.addEventListener('click', () => {
+              openFullModal();
+            });
+          }
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Top bar search listener
+      const topSearchInput = document.querySelector('#attendance-search-input');
+      if (topSearchInput) {
+        topSearchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value.toLowerCase().trim();
+          renderFilteredTable();
+        });
+      }
+
+      // Range Filter Toggle Button
+      const rangeBtn = document.querySelector('#range-filter-btn');
+      if (rangeBtn) {
+        rangeBtn.addEventListener('click', () => {
+          if (currentRangeFilter === '7days') {
+            currentRangeFilter = '30days';
+            rangeBtn.textContent = 'This Month';
+          } else if (currentRangeFilter === '30days') {
+            currentRangeFilter = 'all';
+            rangeBtn.textContent = 'All Records';
+          } else {
+            currentRangeFilter = '7days';
+            rangeBtn.textContent = 'Last 7 Days';
+          }
+          renderFilteredTable();
+        });
+      }
+
+      // Status Filter Toggle Button
+      const statusBtn = document.querySelector('#status-filter-btn');
+      if (statusBtn) {
+        statusBtn.addEventListener('click', () => {
+          if (currentFilterStatus === 'all') {
+            currentFilterStatus = 'full';
+            statusBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg> Filter: Full Day`;
+          } else if (currentFilterStatus === 'full') {
+            currentFilterStatus = 'half';
+            statusBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg> Filter: Half Day`;
+          } else {
+            currentFilterStatus = 'all';
+            statusBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg> Filter: All`;
+          }
+          renderFilteredTable();
+        });
+      }
+
+      // Full Attendance Modal Functionality
+      const backdrop = document.querySelector('#full-attendance-backdrop');
+      const viewFullLink = document.querySelector('#view-full-attendance-link');
+      const closeModalX = document.querySelector('#close-attendance-modal-btn');
+      const closeModalFooter = document.querySelector('#close-modal-footer-btn');
+      const modalTbody = document.querySelector('#modal-attendance-tbody');
+      const modalSearch = document.querySelector('#modal-search-input');
+      const totalLogsCount = document.querySelector('#total-logs-count');
+      const exportCsvBtn = document.querySelector('#export-csv-btn');
+
+      function openFullModal() {
+        if (!backdrop) return;
+        renderModalTable();
+        backdrop.style.opacity = '1';
+        backdrop.style.pointerEvents = 'auto';
+      }
+
+      function closeFullModal() {
+        if (!backdrop) return;
+        backdrop.style.opacity = '0';
+        backdrop.style.pointerEvents = 'none';
+      }
+
+      function renderModalTable(filterQuery = '') {
+        if (!modalTbody) return;
+        let list = [...fullAttendanceData];
+
+        if (filterQuery) {
+          list = list.filter(r =>
+            (r.date || '').toLowerCase().includes(filterQuery) ||
+            (r.hours || '').toLowerCase().includes(filterQuery) ||
+            (r.status || '').toLowerCase().includes(filterQuery)
+          );
+        }
+
+        modalTbody.innerHTML = '';
+        if (list.length === 0) {
+          modalTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9CA3AF; padding: 20px;">No records found</td></tr>`;
+        } else {
+          list.forEach(row => {
+            const tr = document.createElement('tr');
+            const isHalf = (row.status || '').toLowerCase().includes('half');
+            tr.innerHTML = `
+              <td>${row.date}</td>
+              <td>${row.clock_in || '--'}</td>
+              <td>${row.clock_out || '--'}</td>
+              <td><span class="hours-badge ${isHalf ? 'half' : ''}">${row.hours}</span></td>
+              <td><span style="color: ${isHalf ? '#F5A623' : '#4CAF50'}; font-weight: 500; font-size: 12px;">${row.status || 'Full Day'}</span></td>
+            `;
+            modalTbody.appendChild(tr);
+          });
+        }
+
+        if (totalLogsCount) {
+          totalLogsCount.textContent = `Total ${list.length} records logged`;
+        }
+      }
+
+      if (viewFullLink) {
+        viewFullLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          openFullModal();
+        });
+      }
+
+      if (closeModalX) closeModalX.addEventListener('click', closeFullModal);
+      if (closeModalFooter) closeModalFooter.addEventListener('click', closeFullModal);
+      if (backdrop) {
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) closeFullModal();
+        });
+      }
+
+      if (modalSearch) {
+        modalSearch.addEventListener('input', (e) => {
+          renderModalTable(e.target.value.toLowerCase().trim());
+        });
+      }
+
+      if (exportCsvBtn) {
+        exportCsvBtn.addEventListener('click', () => {
+          let csv = 'Date,Clock In,Clock Out,Total Hours,Status\n';
+          fullAttendanceData.forEach(r => {
+            csv += `"${r.date}","${r.clock_in}","${r.clock_out}","${r.hours}","${r.status}"\n`;
+          });
+          const blob = new Blob([csv], { type: 'text/csv' });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `attendance_report_${Date.now()}.csv`;
+          a.click();
+        });
+      }
+
+      if (clockBtn) {
+        clockBtn.addEventListener('click', async () => {
+          const current = await API.fetchAttendanceCurrent();
+          if (current && current.shift && current.shift.clockedIn) {
+            await API.clockOut();
+          } else {
+            await API.clockIn();
+          }
+          refreshAttendance();
+        });
+      }
+
+      refreshAttendance();
+    });
+  </script>
+</body>
+</html>
