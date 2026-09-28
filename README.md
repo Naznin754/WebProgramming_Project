@@ -1,14 +1,10 @@
-# 🍽️ Restaurant OS – Waitstaff Portal
+#  Restaurant OS – Waitstaff Portal
 
-> *"Anyone can cook."* Now anyone can serve, too. 🐀👨‍🍳
+A busy kitchen only works when the front of house runs as smoothly as the stove. This project is the front-of-house side of that idea, a web portal where waiters pick a table, take an order, track it from the kitchen to the table, clock in and out, and manage their profile.
 
-Inspired by *Ratatouille*: a busy kitchen only works when the front of house runs as smoothly as the stove. This project is the front-of-house side of that idea, a web portal where waiters pick a table, take an order, track it from the kitchen to the table, clock in and out, and manage their profile.
 
-It is a full-stack app: a multi-page HTML/CSS/JS frontend served by a **Node.js + Express** REST API, with data stored in a **SQLite** file that is created and seeded automatically on first run. No database server is needed.
 
----
-
-## ✅ What has been done
+##  What has been done
 
 - Designed the Waitstaff Portal UI (dark theme, orange accent) with 8 connected pages
 - Built a REST API with Express covering tables, menu, orders, attendance, profile and stats
@@ -18,10 +14,9 @@ It is a full-stack app: a multi-page HTML/CSS/JS frontend served by a **Node.js 
 - Implemented clock in / clock out with shift history
 - Made the server serve the frontend too, so the whole app runs from one command on one port
 
-## ✨ Features
+##  Features
 
 | Area | What it does |
-| --- | --- |
 | **Tables** | Grid and list views of 24 tables with live status: free, occupied or reserved |
 | **New order** | Browse the menu by category, search by name, set quantities and per-item notes |
 | **Orders** | Filter orders by status (in kitchen, ready, delivered) and mark them ready or served |
@@ -29,17 +24,17 @@ It is a full-stack app: a multi-page HTML/CSS/JS frontend served by a **Node.js 
 | **Profile** | View and edit staff profile details |
 | **Stats** | Table counts (total, occupied, reserved, available) and average daily orders |
 
-## 🧰 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
-| --- | --- |
+
 | Frontend | HTML, CSS, vanilla JavaScript |
 | Backend | Node.js, Express, CORS, dotenv |
 | Database | SQLite via Node's built-in `node:sqlite` module |
 
 ---
 
-## ⚙️ How it works
+##  How it works
 
 ```
 Browser (HTML pages)
@@ -75,7 +70,7 @@ Express server (server.js)  ──►  db.js (dbService)  ──►  restaurant.
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 .
@@ -100,7 +95,7 @@ Express server (server.js)  ──►  db.js (dbService)  ──►  restaurant.
 
 ---
 
-## 🚀 Running it on another machine
+##  Running it on another machine
 
 ### 1. Install the prerequisites
 
@@ -153,8 +148,8 @@ npm start
 You should see:
 
 ```
-🚀 Restaurant OS Backend Server running at http://localhost:3000
-💾 SQLite persistent database connected: restaurant.db
+ Restaurant OS Backend Server running at http://localhost:3000
+ SQLite persistent database connected: restaurant.db
 ```
 
 A Node warning saying SQLite is experimental is normal.
@@ -169,60 +164,6 @@ npm run dev
 
 Go to **http://localhost:3000** in your browser.
 
-### Using it from a phone or another computer on the same Wi-Fi
 
-The server listens on all network interfaces, so other devices can open `http://<host-machine-ip>:3000`. Find the host's IP with `ipconfig` (Windows) or `ip a` / `ifconfig` (Linux/macOS), and allow port 3000 through the firewall if the page doesn't load.
 
-### Troubleshooting
 
-| Problem | Fix |
-| --- | --- |
-| `Cannot find module 'node:sqlite'` or `ERR_UNKNOWN_BUILTIN_MODULE` | Node is too old. Install Node 22.13+ |
-| `Cannot find module 'express'` | Run `npm install` |
-| `EADDRINUSE: address already in use` | Another program uses the port. Change `PORT` in `.env` |
-| `'cd' ... not recognized` or path errors on Windows | Wrap folder names with spaces in quotes: `cd "My Folder"` |
-| Want fresh sample data | Stop the server, delete `restaurant.db`, start again |
-
----
-
-## 🔌 API Reference
-
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| GET | `/api/tables` | List tables with status counts |
-| PATCH | `/api/tables/:id/status` | Set a table to `free`, `occupied` or `reserved` |
-| GET | `/api/menu?category=&search=` | List approved menu items |
-| GET | `/api/orders?filter=` | List orders (`ready`, `delivered`, `in_kitchen`) |
-| GET | `/api/orders/:id` | Get one order by id or order number |
-| POST | `/api/orders` | Create an order `{ tableNumber, items, notes }` |
-| PATCH | `/api/orders/:id/status` | Update order status |
-| GET | `/api/attendance/current` | Current shift and history |
-| POST | `/api/attendance/clock-in` | Clock in |
-| POST | `/api/attendance/clock-out` | Clock out and save to history |
-| GET | `/api/profile` | Get profile |
-| PUT | `/api/profile` | Update profile |
-| GET | `/api/stats` | Table and order statistics |
-
-All responses look like `{ "success": true, ... }` or `{ "success": false, "message": "..." }`.
-
----
-
-## ⚠️ Known limitations
-
-- **No login yet.** There is a single built-in staff member and one shared profile.
-- **Clock-out hours are a placeholder.** Every saved shift is recorded as `8h 00m` instead of the real elapsed time.
-- **Waiter id is hard-coded** on new orders.
-- **Legacy PostgreSQL files.** `restaurant.sql` and `init-db.js` come from an earlier PostgreSQL version and are not used now. The `pg` package is still required by `db.js` until that import is removed.
-- `node:sqlite` is marked experimental by Node, so its behavior may change in future versions.
-
-## 🛣️ Roadmap
-
-- Login and roles (admin, waiter, chef)
-- Real shift-duration calculation on clock-out
-- Kitchen display screen for chefs
-- Billing and payment flow
-- Remove the legacy PostgreSQL files
-
-## 📄 License
-
-Add a license of your choice (for example MIT) before publishing.
